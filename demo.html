@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <p id="demo"></p>
+    <p id="intro">find elements by id</p>
+    <p> learners' place</p>
+    <p>today's challange</p>
+    <p id="para"></p>
+
+    <script>
+        const element = document.getElementById("intro")
+        document.getElementById("demo").innerHTML = "hello world"
+
+
+        document.getElementById("demo").innerHTML = "the content of the element at ID intro is:"
+            + element.innerHTML
+
+        const elemt = document.getElementsByTagName("p")
+        document.getElementById("para").innerHTML = "the text in the 3rd and 4th paragraph is" +
+        elemt[2].innerHTML + " and " + elemt[3].innerHTML
+
+
+
+    </script>
+</body>
+</html>
