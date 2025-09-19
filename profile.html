@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        .header {
+            background-color: #007bff;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header h1 {
+            margin: 0;
+        }
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+        }
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            background-color: rgba(255,255,255,0.1);
+        }
+        .nav-links a:hover {
+            background-color: rgba(255,255,255,0.2);
+        }
+        .logout-btn {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 1rem;
+        }
+        .logout-btn:hover {
+            background-color: #c82333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        .profile-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        .profile-section h2 {
+            margin-top: 0;
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="text"], input[type="email"], input[type="password"], input[type="tel"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        input.valid {
+            border-color: #28a745;
+        }
+        input.invalid {
+            border-color: #dc3545;
+        }
+        input:disabled {
+            background-color: #e9ecef;
+            cursor: not-allowed;
+        }
+        .error-message {
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+        .success-message {
+            color: #28a745;
+            font-size: 14px;
+            margin-top: 10px;
+            display: none;
+            text-align: center;
+            padding: 10px;
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 5px;
+        }
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #545b62;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+        .btn:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        .edit-toggle {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .password-section {
+            border-top: 1px solid #dee2e6;
+            padding-top: 20px;
+            margin-top: 30px;
+        }
+        .password-requirements {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        .requirement {
+            margin: 2px 0;
+        }
+        .requirement.valid {
+            color: #28a745;
+        }
+        .requirement.invalid {
+            color: #dc3545;
+        }
+        .no-access {
+            text-align: center;
+            padding: 2rem;
+            color: #6c757d;
+        }
+        .back-to-login {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            display: inline-block;
+            margin-top: 1rem;
+        }
+        .back-to-login:hover {
+            background-color: #0056b3;
+            text-decoration: none;
+            color: white;
+        }
+        .danger-zone {
+            background-color: #fff5f5;
+            border: 1px solid #fed7d7;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 30px;
+        }
+        .danger-zone h3 {
+            color: #e53e3e;
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>User Profile</h1>
+        <div>
+            <div class="nav-links">
+                <a href="dashboard.html">Dashboard</a>
+                <a href="profile.html">Profile</a>
+            </div>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div id="authContent" style="display: none;">
+            <div class="profile-section">
+                <div class="edit-toggle">
+                    <h2>Profile Information</h2>
+                    <button class="btn btn-secondary" id="editToggleBtn" onclick="toggleEdit()">Edit Profile</button>
+                </div>
+
+                <form id="profileForm">
+                    <div class="form-group">
+                        <label for="firstName">First Name</label>
+                        <input type="text" id="firstName" name="firstName" required disabled>
+                        <div class="error-message" id="firstNameError"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lastName">Last Name</label>
+                        <input type="text" id="lastName" name="lastName" required disabled>
+                        <div class="error-message" id="lastNameError"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" required disabled>
+                        <div class="error-message" id="emailError"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" required disabled>
+                        <div class="error-message" id="phoneError"></div>
+                    </div>
+
+                    <div id="editButtons" style="display: none;">
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                        <button type="button" class="btn btn-secondary" onclick="cancelEdit()">Cancel</button>
+                    </div>
+                </form>
+
+                <div class="success-message" id="successMessage"></div>
+            </div>
+
+            <div class="profile-section">
+                <h2>Change Password</h2>
+                <form id="passwordForm">
+                    <div class="form-group">
+                        <label for="currentPassword">Current Password</label>
+                        <input type="password" id="currentPassword" name="currentPassword" required>
+                        <div class="error-message" id="currentPasswordError"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="newPassword">New Password</label>
+                        <input type="password" id="newPassword" name="newPassword" required>
+                        <div class="password-requirements">
+                            <div class="requirement" id="lengthReq">• At least 8 characters</div>
+                            <div class="requirement" id="upperReq">• One uppercase letter</div>
+                            <div class="requirement" id="lowerReq">• One lowercase letter</div>
+                            <div class="requirement" id="numberReq">• One number</div>
+                            <div class="requirement" id="specialReq">• One special character</div>
+                        </div>
+                        <div class="error-message" id="newPasswordError"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm New Password</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" required>
+                        <div class="error-message" id="confirmPasswordError"></div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Update Password</button>
+                </form>
+            </div>
+
+            <div class="profile-section danger-zone">
+                <h3>Danger Zone</h3>
+                <p>Once you delete your account, there is no going back. Please be certain.</p>
+                <button class="btn btn-danger" onclick="deleteAccount()">Delete Account</button>
+            </div>
+        </div>
+
+        <div id="noAuthContent" class="no-access">
+            <h2>Access Denied</h2>
+            <p>You need to be logged in to view this page.</p>
+            <a href="login.html" class="back-to-login">Go to Login</a>
+        </div>
+    </div>
+
+    <script>
+        let isEditing = false;
+        let originalUserData = {};
+
+        // Get current user from storage
+        function getCurrentUser() {
+            const currentUser = localStorage.getItem('currentUser');
+            return currentUser ? JSON.parse(currentUser) : null;
+        }
+
+        // Get all users from storage
+        function getAllUsers() {
+            const users = localStorage.getItem('users');
+            return users ? JSON.parse(users) : [];
+        }
+
+        // Save users to storage
+        function saveUsers(users) {
+            localStorage.setItem('users', JSON.stringify(users));
+        }
+
+        // Update current user in storage
+        function updateCurrentUser(updatedUser) {
+            localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+        }
+
+        // Validation functions
+        function validateName(name) {
+            return name.length >= 2 && name.length <= 50 && /^[a-zA-Z\s]+$/.test(name);
+        }
+
+        function validatePhone(phone) {
+            return /^[\+]?[1-9][\d]{0,15}$/.test(phone.replace(/[\s\-\(\)]/g, ''));
+        }
+
+        function validateEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
+        function validatePassword(password) {
+            return {
+                length: password.length >= 8,
+                upper: /[A-Z]/.test(password),
+                lower: /[a-z]/.test(password),
+                number: /\d/.test(password),
+                special: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)
+            };
+        }
+
+        function showError(fieldId, message) {
+            const field = document.getElementById(fieldId);
+            const errorDiv = document.getElementById(fieldId + 'Error');
+            field.classList.remove('valid');
+            field.classList.add('invalid');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+
+        function showSuccess(fieldId) {
+            const field = document.getElementById(fieldId);
+            const errorDiv = document.getElementById(fieldId + 'Error');
+            field.classList.remove('invalid');
+            field.classList.add('valid');
+            errorDiv.style.display = 'none';
+        }
+
+        function showSuccessMessage(message) {
+            const successDiv = document.getElementById('successMessage');
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+            setTimeout(() => {
+                successDiv.style.display = 'none';
+            }, 3000);
+        }
+
+        function updatePasswordRequirements(password) {
+            const validation = validatePassword(password);
+            const requirements = {
+                lengthReq: validation.length,
+                upperReq: validation.upper,
+                lowerReq: validation.lower,
+                numberReq: validation.number,
+                specialReq: validation.special
+            };
+
+            Object.keys(requirements).forEach(reqId => {
+                const element = document.getElementById(reqId);
+                if (requirements[reqId]) {
+                    element.classList.add('valid');
+                    element.classList.remove('invalid');
+                } else {
+                    element.classList.add('invalid');
+                    element.classList.remove('valid');
+                }
+            });
+        }
+
+        // Toggle edit mode
+        function toggleEdit() {
+            isEditing = !isEditing;
+            const fields = ['firstName', 'lastName', 'email', 'phone'];
+            const editToggleBtn = document.getElementById('editToggleBtn');
+            const editButtons = document.getElementById('editButtons');
+
+            if (isEditing) {
+                // Store original data
+                const currentUser = getCurrentUser();
+                originalUserData = { ...currentUser };
+
+                // Enable fields
+                fields.forEach(field => {
+                    document.getElementById(field).disabled = false;
+                });
+                editToggleBtn.textContent = 'Cancel';
+                editButtons.style.display = 'block';
+            } else {
+                // Cancel edit - restore original data
+                cancelEdit();
+            }
+        }
+
+        function cancelEdit() {
+            isEditing = false;
+            const fields = ['firstName', 'lastName', 'email', 'phone'];
+            const editToggleBtn = document.getElementById('editToggleBtn');
+            const editButtons = document.getElementById('editButtons');
+
+            // Disable fields and restore original values
+            fields.forEach(field => {
+                const input = document.getElementById(field);
+                input.disabled = true;
+                input.value = originalUserData[field] || '';
+                input.classList.remove('valid', 'invalid');
+                document.getElementById(field + 'Error').style.display = 'none';
+            });
+
+            editToggleBtn.textContent = 'Edit Profile';
+            editButtons.style.display = 'none';
+        }
+
+        // Logout function
+        function logout() {
+            localStorage.removeItem('currentUser');
+            alert('You have been logged out successfully!');
+            window.location.href = 'login.html';
+        }
+
+        // Delete account function
+        function deleteAccount() {
+            if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+                if (confirm('This will permanently delete all your data. Are you absolutely sure?')) {
+                    const currentUser = getCurrentUser();
+                    const users = getAllUsers();
+                    const updatedUsers = users.filter(user => user.id !== currentUser.id);
+                    
+                    saveUsers(updatedUsers);
+                    localStorage.removeUser('currentUser');
+                    
+                    alert('Your account has been deleted successfully.');
+                    window.location.href = 'login.html';
+                }
+            }
+        }
+
+        // Load user data
+        function loadUserData() {
+            const currentUser = getCurrentUser();
+            if (currentUser) {
+                document.getElementById('firstName').value = currentUser.firstName;
+                document.getElementById('lastName').value = currentUser.lastName;
+                document.getElementById('email').value = currentUser.email;
+                document.getElementById('phone').value = currentUser.phone;
+            }
+        }
+
+        // Profile form submission
+        document.getElementById('profileForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                firstName: document.getElementById('firstName').value.trim(),
+                lastName: document.getElementById('lastName').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                phone: document.getElementById('phone').value.trim()
+            };
+
+            let isValid = true;
+
+            // Validate all fields
+            if (!validateName(formData.firstName)) {
+                showError('firstName', 'First name must be 2-50 characters and contain only letters');
+                isValid = false;
+            } else {
+                showSuccess('firstName');
+            }
+
+            if (!validateName(formData.lastName)) {
+                showError('lastName', 'Last name must be 2-50 characters and contain only letters');
+                isValid = false;
+            } else {
+                showSuccess('lastName');
+            }
+
+            if (!validateEmail(formData.email)) {
+                showError('email', 'Please enter a valid email address');
+                isValid = false;
+            } else {
+                // Check if email is taken by another user
+                const users = getAllUsers();
+                const currentUser = getCurrentUser();
+                const emailTaken = users.find(user => user.email === formData.email && user.id !== currentUser.id);
+                if (emailTaken) {
+                    showError('email', 'This email is already taken by another user');
+                    isValid = false;
+                } else {
+                    showSuccess('email');
+                }
+            }
+
+            if (!validatePhone(formData.phone)) {
+                showError('phone', 'Please enter a valid phone number');
+                isValid = false;
+            } else {
+                showSuccess('phone');
+            }
+
+            if (!isValid) return;
+
+            // Update user data
+            const currentUser = getCurrentUser();
+            const users = getAllUsers();
+            const userIndex = users.findIndex(user => user.id === currentUser.id);
+            
+            if (userIndex !== -1) {
+                // Update user in users array
+                users[userIndex] = { ...users[userIndex], ...formData };
+                saveUsers(users);
+                
+                // Update current user
+                const updatedUser = { ...currentUser, ...formData };
+                updateCurrentUser(updatedUser);
+                
+                showSuccessMessage('Profile updated successfully!');
+                cancelEdit(); // Exit edit mode
+            }
+        });
+
+        // Password form submission
+        document.getElementById('passwordForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            let isValid = true;
+            const currentUser = getCurrentUser();
+
+            // Validate current password
+            if (currentPassword !== currentUser.password) {
+                showError('currentPassword', 'Current password is incorrect');
+                isValid = false;
+            } else {
+                showSuccess('currentPassword');
+            }
+
+            // Validate new password
+            const passwordValidation = validatePassword(newPassword);
+            if (!Object.values(passwordValidation).every(v => v)) {
+                showError('newPassword', 'Password does not meet all requirements');
+                isValid = false;
+            } else {
+                showSuccess('newPassword');
+            }
+
+            // Validate password confirmation
+            if (newPassword !== confirmPassword) {
+                showError('confirmPassword', 'Passwords do not match');
+                isValid = false;
+            } else {
+                showSuccess('confirmPassword');
+            }
+
+            if (!isValid) return;
+
+            // Update password
+            const users = getAllUsers();
+            const userIndex = users.findIndex(user => user.id === currentUser.id);
+            
+            if (userIndex !== -1) {
+                // Update password in users array
+                users[userIndex].password = newPassword;
+                saveUsers(users);
+                
+                // Update current user
+                const updatedUser = { ...currentUser, password: newPassword };
+                updateCurrentUser(updatedUser);
+                
+                // Clear form
+                document.getElementById('passwordForm').reset();
+                
+                alert('Password updated successfully!');
+            }
+        });
+
+        // Real-time validation for profile fields
+        document.getElementById('firstName').addEventListener('input', function() {
+            if (this.disabled) return;
+            if (validateName(this.value.trim())) {
+                showSuccess('firstName');
+            } else if (this.value.trim()) {
+                showError('firstName', 'First name must be 2-50 characters and contain only letters');
+            }
+        });
+
+        document.getElementById('lastName').addEventListener('input', function() {
+            if (this.disabled) return;
+            if (validateName(this.value.trim())) {
+                showSuccess('lastName');
+            } else if (this.value.trim()) {
+                showError('lastName', 'Last name must be 2-50 characters and contain only letters');
+            }
+        });
+
+        document.getElementById('email').addEventListener('input', function() {
+            if (this.disabled) return;
+            if (validateEmail(this.value.trim())) {
+                showSuccess('email');
+            } else if (this.value.trim()) {
+                showError('email', 'Please enter a valid email address');
+            }
+        });
+
+        document.getElementById('phone').addEventListener('input', function() {
+            if (this.disabled) return;
+            if (validatePhone(this.value.trim())) {
+                showSuccess('phone');
+            } else if (this.value.trim()) {
+                showError('phone', 'Please enter a valid phone number');
+            }
+        });
+
+        // Real-time validation for password fields
+        document.getElementById('newPassword').addEventListener('input', function() {
+            const password = this.value;
+            updatePasswordRequirements(password);
+            
+            const validation = validatePassword(password);
+            const isValid = Object.values(validation).every(v => v);
+            
+            if (isValid) {
+                showSuccess('newPassword');
+            } else if (password) {
+                showError('newPassword', 'Password does not meet all requirements');
+            }
+        });
+
+        document.getElementById('confirmPassword').addEventListener('input', function() {
+            const newPassword = document.getElementById('newPassword').value;
+            if (this.value && this.value !== newPassword) {
+                showError('confirmPassword', 'Passwords do not match');
+            } else if (this.value === newPassword && newPassword) {
+                showSuccess('confirmPassword');
+            }
+        });
+
+        // Initialize page
+        window.addEventListener('load', function() {
+            const currentUser = getCurrentUser();
+
+            if (currentUser) {
+                // User is logged in, show profile content
+                document.getElementById('authContent').style.display = 'block';
+                document.getElementById('noAuthContent').style.display = 'none';
+                loadUserData();
+            } else {
+                // User is not logged in, show access denied
+                document.getElementById('authContent').style.display = 'none';
+                document.getElementById('noAuthContent').style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

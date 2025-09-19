@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        .header {
+            background-color: #007bff;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header h1 {
+            margin: 0;
+        }
+        .logout-btn {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .logout-btn:hover {
+            background-color: #c82333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        .welcome-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        .user-info {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        .user-info h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .info-row {
+            display: flex;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .info-label {
+            font-weight: bold;
+            width: 120px;
+            color: #555;
+        }
+        .info-value {
+            color: #333;
+        }
+        .all-users-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .user-card {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 5px;
+            border: 1px solid #dee2e6;
+            margin-bottom: 1rem;
+        }
+        .user-card h4 {
+            margin: 0 0 10px 0;
+            color: #007bff;
+        }
+        .no-access {
+            text-align: center;
+            padding: 2rem;
+            color: #6c757d;
+        }
+        .back-to-login {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            display: inline-block;
+            margin-top: 1rem;
+        }
+        .back-to-login:hover {
+            background-color: #0056b3;
+            text-decoration: none;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Dashboard</h1>
+        <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+
+    <div class="container">
+        <div id="authContent" style="display: none;">
+            <div class="welcome-section">
+                <h2>Welcome back, <span id="userName"></span>!</h2>
+                <p>You have successfully logged into your account.</p>
+            </div>
+
+            <div class="user-info">
+                <h3>Your Profile Information</h3>
+                <div id="userDetails"></div>
+            </div>
+
+            <div class="all-users-section">
+                <h3>All Registered Users</h3>
+                <div id="allUsersList"></div>
+            </div>
+        </div>
+
+        <div id="noAuthContent" class="no-access">
+            <h2>Access Denied</h2>
+            <p>You need to be logged in to view this page.</p>
+            <a href="login.html" class="back-to-login">Go to Login</a>
+        </div>
+    </div>
+
+    <script>
+        // Get current user from storage
+        function getCurrentUser() {
+            const currentUser = localStorage.getItem('currentUser');
+            return currentUser ? JSON.parse(currentUser) : null;
+        }
+
+        // Get all users from storage
+        function getAllUsers() {
+            const users = localStorage.getItem('users');
+            return users ? JSON.parse(users) : [];
+        }
+
+        // Logout function
+        function logout() {
+            localStorage.removeItem('currentUser');
+            alert('You have been logged out successfully!');
+            window.location.href = 'login.html';
+        }
+
+        // Display user information
+        function displayUserInfo(user) {
+            document.getElementById('userName').textContent = user.firstName;
+            
+            const userDetails = document.getElementById('userDetails');
+            userDetails.innerHTML = `
+                <div class="info-row">
+                    <div class="info-label">First Name:</div>
+                    <div class="info-value">${user.firstName}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Last Name:</div>
+                    <div class="info-value">${user.lastName}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Email:</div>
+                    <div class="info-value">${user.email}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Phone:</div>
+                    <div class="info-value">${user.phone}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Member Since:</div>
+                    <div class="info-value">${new Date(user.createdAt).toLocaleDateString()}</div>
+                </div>
+            `;
+        }
+
+        // Display all users
+        function displayAllUsers() {
+            const users = getAllUsers();
+            const allUsersList = document.getElementById('allUsersList');
+
+            if (users.length === 0) {
+                allUsersList.innerHTML = '<p>No users registered yet.</p>';
+                return;
+            }
+
+            const usersHTML = users.map(user => `
+                <div class="user-card">
+                    <h4>${user.firstName} ${user.lastName}</h4>
+                    <p><strong>Email:</strong> ${user.email}</p>
+                    <p><strong>Phone:</strong> ${user.phone}</p>
+                    <p><strong>Joined:</strong> ${new Date(user.createdAt).toLocaleDateString()}</p>
+                </div>
+            `).join('');
+
+            allUsersList.innerHTML = usersHTML;
+        }
+
+        // Initialize page
+        window.addEventListener('load', function() {
+            const currentUser = getCurrentUser();
+
+            if (currentUser) {
+                // User is logged in, show dashboard content
+                document.getElementById('authContent').style.display = 'block';
+                document.getElementById('noAuthContent').style.display = 'none';
+                displayUserInfo(currentUser);
+                displayAllUsers();
+            } else {
+                // User is not logged in, show access denied
+                document.getElementById('authContent').style.display = 'none';
+                document.getElementById('noAuthContent').style.display = 'block';
+            }
+        });

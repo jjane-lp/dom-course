@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .form-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="text"], input[type="email"], input[type="password"], input[type="tel"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        input.valid {
+            border-color: #28a745;
+        }
+        input.invalid {
+            border-color: #dc3545;
+        }
+        .error-message {
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+        .success-message {
+            color: #28a745;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .submit-btn:hover {
+            background-color: #0056b3;
+        }
+        .submit-btn:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .login-link a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+        .password-requirements {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        .requirement {
+            margin: 2px 0;
+        }
+        .requirement.valid {
+            color: #28a745;
+        }
+        .requirement.invalid {
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Create Account</h2>
+        <form name="signupForm" id="signupForm">
+            <div class="form-group">
+                <label for="fname">First Name</label>
+                <input type="text" name="fname" id="fname" required>
+                <div class="error-message" id="fnameError"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="lname">Last Name</label>
+                <input type="text" name="lname" id="lname" required>
+                <div class="error-message" id="lnameError"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="tel" name="phone" id="phone" required>
+                <div class="error-message" id="phoneError"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" name="email" id="email" required>
+                <div class="error-message" id="emailError"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" name="password" id="password" required>
+                <div class="password-requirements">
+                    <div class="requirement" id="lengthReq">• At least 8 characters</div>
+                    <div class="requirement" id="upperReq">• One uppercase letter</div>
+                    <div class="requirement" id="lowerReq">• One lowercase letter</div>
+                    <div class="requirement" id="numberReq">• One number</div>
+                    <div class="requirement" id="specialReq">• One special character</div>
+                </div>
+                <div class="error-message" id="passwordError"></div>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitBtn">Create Account</button>
+        </form>
+
+        <div class="login-link">
+            Already have an account? <a href="login.html">Login here</a>
+        </div>
+    </div>
+
+    <script>
+        // Get users from storage or initialize empty array
+        function getUsers() {
+            const users = localStorage.getItem('users');
+            return users ? JSON.parse(users) : [];
+        }
+
+        // Save users to storage
+        function saveUsers(users) {
+            localStorage.setItem('users', JSON.stringify(users));
+        }
+
+        // Validation functions
+        function validateName(name) {
+            return name.length >= 2 && name.length <= 50 && /^[a-zA-Z\s]+$/.test(name);
+        }
+
+        function validatePhone(phone) {
+            return /^[\+]?[1-9][\d]{0,15}$/.test(phone.replace(/[\s\-\(\)]/g, ''));
+        }
+
+        function validateEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
+        function validatePassword(password) {
+            return {
+                length: password.length >= 8,
+                upper: /[A-Z]/.test(password),
+                lower: /[a-z]/.test(password),
+                number: /\d/.test(password),
+                special: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)
+            };
+        }
+
+        function showError(fieldId, message) {
+            const field = document.getElementById(fieldId);
+            const errorDiv = document.getElementById(fieldId + 'Error');
+            field.classList.remove('valid');
+            field.classList.add('invalid');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+
+        function showSuccess(fieldId) {
+            const field = document.getElementById(fieldId);
+            const errorDiv = document.getElementById(fieldId + 'Error');
+            field.classList.remove('invalid');
+            field.classList.add('valid');
+            errorDiv.style.display = 'none';
+        }
+
+        function updatePasswordRequirements(password) {
+            const validation = validatePassword(password);
+            const requirements = {
+                lengthReq: validation.length,
+                upperReq: validation.upper,
+                lowerReq: validation.lower,
+                numberReq: validation.number,
+                specialReq: validation.special
+            };
+
+            Object.keys(requirements).forEach(reqId => {
+                const element = document.getElementById(reqId);
+                if (requirements[reqId]) {
+                    element.classList.add('valid');
+                    element.classList.remove('invalid');
+                } else {
+                    element.classList.add('invalid');
+                    element.classList.remove('valid');
+                }
+            });
+        }
+
+        // Real-time validation
+        document.getElementById('fname').addEventListener('input', function() {
+            if (validateName(this.value.trim())) {
+                showSuccess('fname');
+            } else if (this.value.trim()) {
+                showError('fname', 'First name must be 2-50 characters and contain only letters');
+            }
+        });
+
+        document.getElementById('lname').addEventListener('input', function() {
+            if (validateName(this.value.trim())) {
+                showSuccess('lname');
+            } else if (this.value.trim()) {
+                showError('lname', 'Last name must be 2-50 characters and contain only letters');
+            }
+        });
+
+        document.getElementById('phone').addEventListener('input', function() {
+            if (validatePhone(this.value.trim())) {
+                showSuccess('phone');
+            } else if (this.value.trim()) {
+                showError('phone', 'Please enter a valid phone number');
+            }
+        });
+
+        document.getElementById('email').addEventListener('input', function() {
+            if (validateEmail(this.value.trim())) {
+                showSuccess('email');
+            } else if (this.value.trim()) {
+                showError('email', 'Please enter a valid email address');
+            }
+        });
+
+        document.getElementById('password').addEventListener('input', function() {
+            const password = this.value;
+            updatePasswordRequirements(password);
+            
+            const validation = validatePassword(password);
+            const isValid = Object.values(validation).every(v => v);
+            
+            if (isValid) {
+                showSuccess('password');
+            } else if (password) {
+                showError('password', 'Password does not meet all requirements');
+            }
+        });
+
+        // Form submission
+        document.getElementById('signupForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                fname: document.getElementById('fname').value.trim(),
+                lname: document.getElementById('lname').value.trim(),
+                phone: document.getElementById('phone').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                password: document.getElementById('password').value
+            };
+
+            let isValid = true;
+
+            // Validate all fields
+            if (!validateName(formData.fname)) {
+                showError('fname', 'First name must be 2-50 characters and contain only letters');
+                isValid = false;
+            }
+
+            if (!validateName(formData.lname)) {
+                showError('lname', 'Last name must be 2-50 characters and contain only letters');
+                isValid = false;
+            }
+
+            if (!validatePhone(formData.phone)) {
+                showError('phone', 'Please enter a valid phone number');
+                isValid = false;
+            }
+
+            if (!validateEmail(formData.email)) {
+                showError('email', 'Please enter a valid email address');
+                isValid = false;
+            }
+
+            const passwordValidation = validatePassword(formData.password);
+            if (!Object.values(passwordValidation).every(v => v)) {
+                showError('password', 'Password does not meet all requirements');
+                isValid = false;
+            }
+
+            if (!isValid) return;
+
+            // Check if email already exists
+            const users = getUsers();
+            if (users.find(user => user.email === formData.email)) {
+                showError('email', 'An account with this email already exists');
+                return;
+            }
+
+            // Add new user
+            const newUser = {
+                id: Date.now(),
+                firstName: formData.fname,
+                lastName: formData.lname,
+                phone: formData.phone,
+                email: formData.email,
+                password: formData.password, // In real apps, this should be hashed
+                createdAt: new Date().toISOString()
+            };
+
+            users.push(newUser);
+            saveUsers(users);
+
+            alert('Account created successfully! Please login.');
+            window.location.href = 'login.html';
+        });
+    </script>
+</body>
+</html>

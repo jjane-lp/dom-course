@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript in HTML Examples</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        h2 {
+            color: #ffd700;
+            border-bottom: 2px solid #ffd700;
+            padding-bottom: 10px;
+            margin-top: 30px;
+        }
+        
+        button {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            margin: 10px 5px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        input {
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            margin: 5px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+        }
+        
+        #output {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            min-height: 50px;
+            border: 1px dashed rgba(255, 255, 255, 0.5);
+        }
+        
+        .code-example {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            border-left: 4px solid #ffd700;
+        }
+        
+        .demo-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+    </style>
+    
+    <!-- Method 1: JavaScript in the <head> section -->
+    <script>
+        function headFunction() {
+            alert('This JavaScript was defined in the <head> section!');
+        }
+        
+        // This runs when the page loads
+        window.addEventListener('load', function() {
+            console.log('Page loaded! JavaScript from head section is working.');
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Adding JavaScript to HTML</h1>
+        
+        <div class="demo-section">
+            <h2>Method 1: Script in &lt;head&gt;</h2>
+            <p>JavaScript defined in the head section, available throughout the page.</p>
+            <div class="code-example">
+&lt;script&gt;<br>
+&nbsp;&nbsp;function headFunction() {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;alert('Hello from head!');<br>
+&nbsp;&nbsp;}<br>
+&lt;/script&gt;
+            </div>
+            <button onclick="headFunction()">Call Head Function</button>
+        </div>
+        
+        <div class="demo-section">
+            <h2>Method 2: Inline JavaScript</h2>
+            <p>JavaScript directly in HTML attributes like onclick, onload, etc.</p>
+            <div class="code-example">
+&lt;button onclick="alert('Inline JavaScript!')"&gt;Click Me&lt;/button&gt;
+            </div>
+            <button onclick="alert('This is inline JavaScript!')">Inline Alert</button>
+            <button onclick="this.style.background='linear-gradient(45deg, #ff9a9e, #fecfef)'; this.textContent='Clicked!'">Change Style</button>
+        </div>
+        
+        <div class="demo-section">
+            <h2>Method 3: Script at End of Body</h2>
+            <p>JavaScript at the bottom of the page - runs after HTML is loaded.</p>
+            <div class="code-example">
+&lt;script&gt;<br>
+&nbsp;&nbsp;// This script runs after the HTML is parsed<br>
+&nbsp;&nbsp;document.getElementById('myButton').onclick = function() {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;// Do something<br>
+&nbsp;&nbsp;};<br>
+&lt;/script&gt;
+            </div>
+            <button id="bodyScriptButton">Body Script Button</button>
+        </div>
+        
+        <div class="demo-section">
+            <h2>Method 4: External JavaScript File</h2>
+            <p>Link to external .js file (simulated here with internal script).</p>
+            <div class="code-example">
+&lt;script src="script.js"&gt;&lt;/script&gt;
+            </div>
+            <button onclick="externalFunction()">External Function</button>
+        </div>
+        
+        <div class="demo-section">
+            <h2>Interactive Demo</h2>
+            <p>Try these interactive examples:</p>
+            <input type="text" id="nameInput" placeholder="Enter your name">
+            <button onclick="greetUser()">Greet Me</button>
+            <button onclick="changeBackground()">Change Background</button>
+            <button onclick="addElement()">Add Element</button>
+            <button onclick="getCurrentTime()">Show Time</button>
+            
+            <div id="output">
+                <p>Output will appear here...</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Method 3: JavaScript at the end of body -->
+    <script>
+        // This script runs after the HTML above has been parsed
+        document.getElementById('bodyScriptButton').onclick = function() {
+            alert('This function was defined in a script at the end of the body!');
+        };
+        
+        // Simulate external JavaScript
+        function externalFunction() {
+            alert('This simulates a function from an external JavaScript file!');
+        }
+        
+        // Interactive demo functions
+        function greetUser() {
+            const name = document.getElementById('nameInput').value;
+            const output = document.getElementById('output');
+            if (name.trim() === '') {
+                output.innerHTML = '<p style="color: #ff6b6b;">Please enter your name first!</p>';
+            } else {
+                output.innerHTML = `<p style="color: #4ecdc4;">Hello, ${name}! Welcome to JavaScript in HTML!</p>`;
+            }
+        }
+        
+        function changeBackground() {
+            const colors = [
+                'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+                'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+                'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+                'linear-gradient(135deg, #fa709a 0%, #fee140 100%)'
+            ];
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+            document.body.style.background = randomColor;
+            
+            document.getElementById('output').innerHTML = '<p>Background changed! 🎨</p>';
+        }
+        
+        let elementCounter = 0;
+        function addElement() {
+            elementCounter++;
+            const output = document.getElementById('output');
+            const newElement = document.createElement('div');
+            newElement.innerHTML = `<p style="padding: 10px; margin: 5px; background: rgba(255,255,255,0.2); border-radius: 5px;">Dynamic Element #${elementCounter} ✨</p>`;
+            output.appendChild(newElement);
+        }
+        
+        function getCurrentTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString();
+            const dateString = now.toLocaleDateString();
+            document.getElementById('output').innerHTML = 
+                `<p>Current time: <strong>${timeString}</strong><br>Date: <strong>${dateString}</strong> 📅</p>`;
+        }
+        
+        // Add some dynamic behavior
+        setInterval(function() {
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(button => {
+                if (Math.random() < 0.1) { // 10% chance
+                    button.style.transform = 'scale(1.05)';
+                    setTimeout(() => {
+                        button.style.transform = 'scale(1)';
+                    }, 200);
+                }
+            });
+        }, 3000);
+        
+        // Console welcome message
+        console.log('🚀 Welcome to JavaScript in HTML demo!');
+        console.log('📝 Check out the different methods of adding JavaScript to HTML pages.');
+    </script>
+</body>
+</html>

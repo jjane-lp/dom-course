@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .form-container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="email"], input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        input.valid {
+            border-color: #28a745;
+        }
+        input.invalid {
+            border-color: #dc3545;
+        }
+        .error-message {
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+        .success-message {
+            color: #28a745;
+            font-size: 14px;
+            margin-top: 10px;
+            display: none;
+            text-align: center;
+        }
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .submit-btn:hover {
+            background-color: #218838;
+        }
+        .submit-btn:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        .signup-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .signup-link a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .signup-link a:hover {
+            text-decoration: underline;
+        }
+        .forgot-password {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+        .forgot-password a {
+            color: #6c757d;
+            text-decoration: none;
+        }
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+        .users-section {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+        .users-section h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+        .user-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .user-item {
+            background: white;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        .user-item strong {
+            color: #007bff;
+        }
+        .no-users {
+            text-align: center;
+            color: #6c757d;
+            font-style: italic;
+        }
+        .toggle-users {
+            background-color: #17a2b8;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .toggle-users:hover {
+            background-color: #138496;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Login</h2>
+        <form name="loginForm" id="loginForm">
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" name="email" id="email" required>
+                <div class="error-message" id="emailError"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" name="password" id="password" required>
+                <div class="error-message" id="passwordError"></div>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitBtn">Login</button>
+        </form>
+
+        <div class="success-message" id="successMessage"></div>
+
+        <div class="forgot-password">
+            <a href="#">Forgot your password?</a>
+        </div>
+
+        <div class="signup-link">
+            Don't have an account? <a href="signup.html">Sign up here</a>
+        </div>
+
+        <div class="users-section">
+            <button class="toggle-users" onclick="toggleUsers()">View Registered Users</button>
+            <div id="usersContainer" style="display: none;">
+                <h3>Registered Users</h3>
+                <div id="usersList" class="user-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get users from storage
+        function getUsers() {
+            const users = localStorage.getItem('users');
+            return users ? JSON.parse(users) : [];
+        }
+
+        // Set current user session
+        function setCurrentUser(user) {
+            localStorage.setItem('currentUser', JSON.stringify(user));
+        }
+
+        // Validation functions
+        function validateEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
+        function showError(fieldId, message) {
+            const field = document.getElementById(fieldId);
+            const errorDiv = document.getElementById(fieldId + 'Error');
+            field.classList.remove('valid');
+            field.classList.add('invalid');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+
+        function showSuccess(fieldId) {
+            const field = document.getElementById(fieldId);
+            const errorDiv = document.getElementById(fieldId + 'Error');
+            field.classList.remove('invalid');
+            field.classList.add('valid');
+            errorDiv.style.display = 'none';
+        }
+
+        function showSuccessMessage(message) {
+            const successDiv = document.getElementById('successMessage');
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+        }
+
+        // Real-time validation
+        document.getElementById('email').addEventListener('input', function() {
+            if (validateEmail(this.value.trim())) {
+                showSuccess('email');
+            } else if (this.value.trim()) {
+                showError('email', 'Please enter a valid email address');
+            }
+        });
+
+        document.getElementById('password').addEventListener('input', function() {
+            if (this.value.length >= 1) {
+                showSuccess('password');
+            }
+        });
+
+        // Form submission
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+
+            let isValid = true;
+
+            // Validate email
+            if (!validateEmail(email)) {
+                showError('email', 'Please enter a valid email address');
+                isValid = false;
+            }
+
+            // Validate password
+            if (!password) {
+                showError('password', 'Password is required');
+                isValid = false;
+            }
+
+            if (!isValid) return;
+
+            // Check credentials
+            const users = getUsers();
+            const user = users.find(u => u.email === email);
+
+            if (!user) {
+                showError('email', 'No account found with this email address');
+                return;
+            }
+
+            if (user.password !== password) {
+                showError('password', 'Incorrect password');
+                return;
+            }
+
+            // Successful login
+            setCurrentUser(user);
+            showSuccessMessage('Login successful! Redirecting...');
+            
+            setTimeout(() => {
+                window.location.href = 'dashboard.html';
+            }, 1500);
+        });
+
+        // Toggle users display
+        function toggleUsers() {
+            const container = document.getElementById('usersContainer');
+            const button = event.target;
+            
+            if (container.style.display === 'none') {
+                displayUsers();
+                container.style.display = 'block';
+                button.textContent = 'Hide Registered Users';
+            } else {
+                container.style.display = 'none';
+                button.textContent = 'View Registered Users';
+            }
+        }
+
+        // Display all registered users
+        function displayUsers() {
+            const users = getUsers();
+            const usersList = document.getElementById('usersList');
+
+            if (users.length === 0) {
+                usersList.innerHTML = '<div class="no-users">No users registered yet.</div>';
+                return;
+            }
+
+            const usersHTML = users.map(user => `
+                <div class="user-item">
+                    <strong>${user.firstName} ${user.lastName}</strong><br>
+                    Email: ${user.email}<br>
+                    Phone: ${user.phone}<br>
+                    Registered: ${new Date(user.createdAt).toLocaleDateString()}
+                </div>
+            `).join('');
+
+            usersList.innerHTML = usersHTML;
+        }
+
+        // Load users on page load for demo purposes
+        window.addEventListener('load', function() {
+            // Add some demo users if none exist
+            const users = getUsers();
+            if (users.length === 0) {
+                const demoUsers = [
+                    {
+                        id: 1,
+                        firstName: 'John',
+                        lastName: 'Doe',
+                        email: 'john@example.com',
+                        phone: '+1234567890',
+                        password: 'Password123!',
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: 2,
+                        firstName: 'Jane',
+                        lastName: 'Smith',
+                        email: 'jane@example.com',
+                        phone: '+0987654321',
+                        password: 'SecurePass456@',
+                        createdAt: new Date().toISOString()
+                    }
+                ];
+                localStorage.setItem('users', JSON.stringify(demoUsers));
+            }
+        });
+    </script>
+</body>
+</html>
